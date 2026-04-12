@@ -1,23 +1,17 @@
-# 💻 Inspect.gg 
+# 💻 Inspect.gg
 
-<p align="center">
-  <b>A hardware inspection and fair price calculator for second-hand laptops — built for Indian buyers.</b><br>
-  ![Python 3.11+](https://img.shields.io/badge/Python-3.11+-blue.svg)
-  ![Platform: Windows](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
-  ![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
-  ![Made with Flask](https://img.shields.io/badge/Made%20with-Flask-black.svg)
-</p>
+**A hardware inspection and fair price calculator for second-hand laptops — built for Indian buyers.**
+
+![Python 3.11+](https://img.shields.io/badge/Python-3.11+-blue.svg)
+![Platform: Windows](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+![Made with Flask](https://img.shields.io/badge/Made%20with-Flask-black.svg)
 
 ---
 
 ## 📌 What it does
 
 **Inspect.gg** is a powerful diagnostic utility designed to protect buyers from "lemon" deals in the Indian second-hand market. It runs locally on the target machine, performing deep hardware telemetry scans via WMI and pynvml to audit system health. Beyond just reporting specs, it runs isolated stress tests on the CPU, GPU, RAM, and storage to detect hidden performance bottlenecks or thermal throttling. Finally, it calculates a fair market valuation in INR based on your customizable pricing rules and generates a high-fidelity **AI Valuation Prompt** to get a second opinion from services like ChatGPT or Gemini.
-
-## 📸 Screenshots
-
-![Inspect.gg UI](docs/screenshot.png)
-> **Note**: Replace with actual screenshot before publishing.
 
 ## 🚀 Quick Start
 
