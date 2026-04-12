@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspect.gg - Laptop Buyer's Inspector</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <input type="hidden" id="session_id" value="{{ session_id }}">
+        
+        {% if not admin_status %}
+        <div class="admin-banner">
+            WARNING: You are running without Administrator privileges. WMI hardware scans (CPU/Battery) may fail or return empty data. Please restart with 'Run as Administrator'.
+        </div>
+        {% endif %}
+        
+        <header class="header-clay">
+            <h1>Inspect.gg</h1>
+            <p>Laptop Buyer's Inspector & Benchmark Tool</p>
+            <div style="display:flex; justify-content:center; gap: 10px; margin-top: 10px;">
+               <button id="runAllBtn" class="clay-btn primary-btn" style="width: auto;">Run All Tests</button>
+               <button onclick="exportPDF()" class="clay-btn secondary-btn" style="width: auto;">Export PDF</button>
+               <button onclick="exportHTML()" class="clay-btn secondary-btn" style="width: auto;">Export HTML</button>
+            </div>
+            <div class="progress-bar-container" id="mainProgressContainer" style="display: none;">
+                <div class="progress-bar" id="mainProgressBar"></div>
+            </div>
+            <p id="statusText" class="status-text">Ready to scan.</p>
+            <div id="liveThermals" style="margin-top: 10px; font-weight: bold; text-align: center; color: #dc3545; display: none;"></div>
+        </header>
+
+        <section class="clay-card health-score-section">
+            <h2>Overall Health</h2>
+            <div class="chart-container">
+                <canvas id="healthChart"></canvas>
+                <div class="health-score-text" id="healthScoreText">?</div>
+            </div>
+            <p id="saveIndicator" style="color: #28a745; font-weight:bold;"></p>
+        </section>
+
+        <div id="resultsSections" style="display: none;">
+            <!-- Device History -->
+            <details class="clay-card collapsible">
+                <summary>🖥️ Device Identity & History <span class="badge" id="badge-os">Pending</span></summary>
+                <div class="card-content" id="content-os">
+                    <p>Loading...</p>
+                </div>
+            </details>
+            
+            <!-- BIOS -->
+            <details class="clay-card collapsible">
+                <summary>🧬 BIOS & Motherboard <span class="badge" id="badge-bios">Pending</span></summary>
+                <div class="card-content" id="content-bios">
+                    <p>Loading...</p>
+                </div>
+            </details>
+
+            <!-- CPU -->
+            <details class="clay-card collapsible">
+                <summary>⚙️ CPU Full Check <span class="badge" id="badge-cpu">Pending</span></summary>
+                <div class="card-content" id="content-cpu">
+                    <p>Loading...</p>
+                </div>
+            </details>
+
+            <!-- GPU -->
+            <details class="clay-card collapsible">
+                <summary>🎮 GPU Full Check <span class="badge" id="badge-gpu">Pending</span></summary>
+                <div class="card-content" id="content-gpu">
+                    <p>Loading...</p>
+                </div>
+            </details>
+
+            <!-- RAM -->
+            <details class="clay-card collapsible">
+                <summary>🧠 RAM Full Check <span class="badge" id="badge-ram">Pending</span></summary>
+                <div class="card-content" id="content-ram">
+                    <p>Loading...</p>
+                </div>
+            </details>
+
+            <!-- Storage -->
+            <details class="clay-card collapsible">
+                <summary>💾 SSD/HDD Deep Check <span class="badge" id="badge-disk">Pending</span></summary>
+                <div class="card-content" id="content-disk">
+                    <p>Loading...</p>
+                </div>
+            </details>
+
+            <!-- Battery -->
+            <details class="clay-card collapsible">
+                <summary>🔋 Battery Deep Check <span class="badge" id="badge-battery">Pending</span></summary>
+                <div class="card-content" id="content-battery">
+                    <p>Loading...</p>
+                </div>
+            </details>
+
+            <!-- Thermals -->
+            <details class="clay-card collapsible">
+                <summary>🌡️ Thermals & Cooling <span class="badge" id="badge-thermals">Pending</span></summary>
+                <div class="card-content" id="content-thermals">
+                    <p>Loading...</p>
+                </div>
+            </details>
+
+            <!-- Manual Checks -->
+            <section class="clay-card manual-checks">
+                <h2>⌨️ Manual Hardware Checks</h2>
+                
+                <h3 style="margin-top: 10px; color: #629BB5; font-size: 1.1rem;">Group A: Essential Ports (Deducts Value)</h3>
+                <div class="manual-grid" style="margin-bottom: 1rem;">
+                    <label class="clay-checkbox"><input type="checkbox" class="port-check" data-id="usb" checked> USB Ports Working</label>
+                    <label class="clay-checkbox"><input type="checkbox" class="port-check" data-id="headphone" checked> Headphone Jack</label>
+                    <label class="clay-checkbox"><input type="checkbox" class="port-check" data-id="hdmi" checked> HDMI/DP</label>
+                    <label class="clay-checkbox"><input type="checkbox" class="port-check" data-id="charger" checked> Charger Firm</label>
+                </div>
+                
+                <h3 style="color: #629BB5; font-size: 1.1rem;">Group B: Peripherals (Informational Only)</h3>
+                <div class="manual-grid">
+                    <label class="clay-checkbox"><input type="checkbox" class="peripheral-check" data-id="webcam" checked> Webcam</label>
+                    <label class="clay-checkbox"><input type="checkbox" class="peripheral-check" data-id="mic" checked> Microphone</label>
+                    <label class="clay-checkbox"><input type="checkbox" class="peripheral-check" data-id="keyboard" checked> Keyboard</label>
+                    <label class="clay-checkbox"><input type="checkbox" class="peripheral-check" data-id="touchpad" checked> Touchpad</label>
+                    <label class="clay-checkbox"><input type="checkbox" class="peripheral-check" data-id="speakers" checked> Speakers</label>
+                    <label class="clay-checkbox"><input type="checkbox" class="peripheral-check" data-id="wifi" checked> WiFi</label>
+                    <label class="clay-checkbox"><input type="checkbox" class="peripheral-check" data-id="bluetooth" checked> Bluetooth</label>
+                </div>
+
+                <h3>🖥️ Display Check</h3>
+                <div id="displayInfoCard" style="background: rgba(255,255,255,0.5); padding: 10px; border-radius: 8px; margin-bottom: 10px; font-size: 0.9rem;">
+                    <span id="screenResSpan">Resolution: Waiting...</span> | 
+                    <span id="screenRefSpan">Refresh Rate: Waiting...</span>
+                </div>
+                <button id="displayTestBtn" class="clay-btn secondary-btn">Run Display Color Test</button>
+                <label class="clay-checkbox mt-10"><input type="checkbox" id="chkDisplay" checked> Display is perfect (No dead pixels or bleeding)</label>
+            </section>
+
+            <!-- AI Valuation Prompt & Verdict -->
+            <section class="clay-card valuation-card">
+                <h2>🤖 AI Valuation Engine</h2>
+                <p style="margin-bottom: 1rem; color: var(--text-light); font-size: 0.9rem;">
+                    Instead of guessing a fixed price, we generate a high-fidelity diagnostic prompt for you. 
+                    Copy the text below and paste it into <strong>ChatGPT</strong> or <strong>Gemini</strong> to get a real-time, 
+                    market-accurate price for this device in India.
+                </p>
+
+                <div class="prompt-well" style="margin-bottom: 1.5rem;">
+                    <textarea id="valuationPrompt" readonly 
+                        style="width: 100%; height: 260px; background: rgba(0,0,0,0.05); border: none; border-radius: 12px; padding: 1rem; font-family: 'Share Tech Mono', monospace; font-size: 0.85rem; color: var(--text-main); resize: none; box-shadow: inset 4px 4px 8px rgba(0,0,0,0.05);"
+                        placeholder="Click the button below to generate your valuation prompt..."></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 2rem;">
+                    <button id="copyPromptBtn" class="clay-btn secondary-btn" style="flex: 1;" disabled>📋 Copy Prompt</button>
+                    <button id="openAIBtn" class="clay-btn secondary-btn" style="flex: 1;" disabled>🌐 Open ChatGPT</button>
+                </div>
+
+                <div class="final-verdict" id="finalVerdictBox" style="display:none;">
+                    <h3 style="margin-bottom: 5px;">Integrity Check Verdict</h3>
+                    <h1 id="verdictText">PENDING</h1>
+                </div>
+
+                <div id="manualPrompt" style="display: none; text-align: center; margin-top: 15px; color: #dc3545; font-weight: bold; animation: pulse 2s infinite;">
+                    Wait! Complete manual checks above, then generate your prompt.
+                </div>
+                <style>@keyframes pulse { 0% {opacity:1;} 50% {opacity:0.3;} 100% {opacity:1;} }</style>
+
+                <button id="generateValuationBtn" class="clay-btn primary-btn mt-20">Generate AI Valuation Prompt</button>
+            </section>
+        </div>
+
+        <!-- Color test overlay -->
+        <div id="colorTestOverlay" style="display: none;"></div>
+
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

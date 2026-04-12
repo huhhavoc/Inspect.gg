@@ -1,0 +1,33 @@
+{
+  "base_tiers": {
+    "i9": 80000,
+    "i7": 60000,
+    "i5": 40000,
+    "i3": 20000,
+    "ryzen 9": 75000,
+    "ryzen 7": 55000,
+    "ryzen 5": 35000,
+    "m3": 95000,
+    "m2": 75000,
+    "m1": 55000,
+    "default": 25000
+  },
+  "gpu_tiers": {
+    "rtx 40": 40000,
+    "rtx 30": 25000,
+    "rtx 20": 15000,
+    "gtx": 8000,
+    "integrated": 0
+  },
+  "deductions": {
+    "battery_wear_high": 6000,
+    "battery_critical": 10000,
+    "disk_smart_warning": 8000,
+    "thermal_throttling": 4000,
+    "ram_single_channel": 1500,
+    "manual_check_failure": 2000,
+    "display_issue": 5000,
+    "recent_wipe_penalty": 2500
+  },
+  "depreciation_per_year": 0.15
+}
