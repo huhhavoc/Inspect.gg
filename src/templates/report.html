@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inspect.gg Diagnostic Report</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #e0e5ec; padding: 40px; color: #2c3e50; line-height: 1.6; }
+        .card { max-width: 900px; margin: auto; background: #e0e5ec; padding: 40px; border-radius: 24px; box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255, 0.5); }
+        h1 { color: #447F98; text-align: center; font-variant: small-caps; }
+        .prompt-box { background: #f8f9fa; padding: 25px; border-radius: 16px; border-left: 5px solid #447F98; margin: 20px 0; font-family: 'Courier New', Courier, monospace; white-space: pre-wrap; font-size: 14px; position: relative; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 10px; font-size: 12px; font-weight: bold; margin-bottom: 20px; }
+        .badge-info { background: #d1ecf1; color: #0c5460; }
+        .section-title { color: #447F98; border-bottom: 2px solid #447F98; padding-bottom: 5px; margin-top: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #dee2e6; }
+        th { color: #629BB5; width: 30%; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Inspect.gg Device Report</h1>
+        <div style="text-align: center;">
+            <span class="badge badge-info">Technical Integrity Report</span>
+        </div>
+
+        <div class="prompt-box">
+            <strong>AI VALUATION PROMPT (Copy this to ChatGPT/Gemini):</strong>
+            <hr style="border: 0.5px solid #ccc; margin: 15px 0;">
+{{ data.get('valuation_prompt', 'Prompt not generated.') }}
+        </div>
+
+        <h3 class="section-title">Diagnostic Details</h3>
+        <table>
+            <tr><th>Status</th><td>Diagnostics Completed</td></tr>
+            <tr><th>Manufacturer</th><td>{{ data['request']['system_info']['bios']['manufacturer'] }}</td></tr>
+            <tr><th>Model</th><td>{{ data['request']['system_info']['bios']['model'] }}</td></tr>
+            <tr><th>CPU</th><td>{{ data['request']['system_info']['cpu']['name'] }}</td></tr>
+            <tr><th>GPU</th><td>{{ data['request']['system_info']['gpu'][0]['name'] if data['request']['system_info']['gpu'] else 'Integrated' }}</td></tr>
+            <tr><th>RAM</th><td>{{ data['request']['system_info']['ram']['total_gb'] }} GB</td></tr>
+        </table>
+
+        <p style="font-size: 12px; color: #777; margin-top: 40px; text-align: center;">
+            This report was generated locally by Inspect.gg. Use the prompt above for market valuation.
+        </p>
+    </div>
+</body>
+</html>

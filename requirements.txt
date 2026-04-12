@@ -1,0 +1,10 @@
+# Inspect.gg Dependency List
+# NOTE: pywin32 provides both 'win32api' and 'pythoncom'. 
+# NOTE: 'nvidia-ml-py' installs as the 'pynvml' namespace (import pynvml will work).
+
+Flask
+psutil
+nvidia-ml-py
+py-cpuinfo
+WMI
+pywin32
